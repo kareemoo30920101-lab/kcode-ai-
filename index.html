@@ -1,0 +1,658 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#04131c">
+<title>KCODE AI | المساعد الدراسي</title>
+
+<style>
+:root {
+  --bg:#041019;
+  --panel:#071923;
+  --card:#0a202c;
+  --line:#153c49;
+  --text:#f3f8fb;
+  --muted:#91a9b7;
+  --green:#00d5a0;
+  --cyan:#43dce8;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+button,input,textarea { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,textarea:focus-visible {
+  outline:2px solid var(--green);
+  outline-offset:3px;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:245px;
+  flex-shrink:0;
+  background:#04131c;
+  border-left:1px solid var(--line);
+  padding:23px 17px;
+  display:flex;
+  flex-direction:column;
+  gap:23px;
+}
+.brand { display:flex; align-items:center; gap:11px; }
+.logo {
+  width:52px;height:52px;
+  display:grid;place-items:center;
+  border-radius:15px;
+  color:white;
+  font-size:34px;font-weight:900;
+  background:linear-gradient(135deg,#00e2b0,#087f83);
+  box-shadow:0 0 25px #00d6a022;
+}
+.brand h1 { font-size:20px;margin:0;white-space:nowrap; }
+.brand h1 span,.hero h2 span { color:var(--green); }
+.brand small { color:var(--muted);font-size:10px; }
+.nav { display:grid;gap:7px;margin-top:12px; }
+.nav button {
+  text-align:right;
+  border:1px solid transparent;
+  background:transparent;
+  color:#c5d8e0;
+  border-radius:12px;
+  padding:13px 12px;
+}
+.nav button:hover,.nav button.active {
+  color:var(--green);
+  background:#06332f;
+  border-color:#07594e;
+}
+.grade {
+  border:1px solid #087d6e;
+  border-radius:16px;
+  padding:15px;
+  font-size:13px;
+  line-height:2;
+  background:#06221f;
+}
+.grade strong { display:block;font-size:15px; }
+.side-quote {
+  margin-top:auto;
+  color:var(--muted);
+  font-size:12px;
+  line-height:2;
+}
+.main { flex:1;min-width:0;padding:23px clamp(12px,3vw,34px); }
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:23px;
+}
+.topbar small { color:var(--muted); }
+.top-actions { display:flex;align-items:center;gap:9px; }
+.icon-btn {
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:11px;
+  padding:9px 12px;
+}
+.mobile-menu { display:none; }
+.hero {
+  position:relative;
+  overflow:hidden;
+  min-height:240px;
+  display:flex;
+  align-items:center;
+  padding:28px;
+  margin-bottom:22px;
+  border:1px solid #087365;
+  border-radius:23px;
+  background:
+    radial-gradient(ellipse at 10% 25%,#00cba32c,transparent 48%),
+    linear-gradient(120deg,#061722,#05252b,#061620);
+}
+.hero-content { position:relative;z-index:1;max-width:520px; }
+.pill {
+  display:inline-block;
+  border:1px solid #087d70;
+  border-radius:30px;
+  padding:7px 12px;
+  color:#83f8dc;
+  font-size:12px;
+}
+.hero h2 { font-size:clamp(29px,4vw,44px);margin:15px 0; }
+.hero p { color:var(--muted);line-height:1.9;margin:0; }
+.mascot {
+  position:absolute;
+  left:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:165px;height:165px;
+  border:1px solid #00d6a033;
+  border-radius:50%;
+  background:radial-gradient(circle,#00cba326,transparent 70%);
+  display:grid;place-items:center;
+  font-size:82px;
+}
+.section {
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:19px;
+  margin-bottom:22px;
+  background:linear-gradient(145deg,#071923,#04131b);
+}
+.section-title {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  font-weight:750;
+  margin-bottom:17px;
+}
+.muted { color:var(--muted);font-size:12px;font-weight:400; }
+.subjects {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.subject {
+  border:1px solid #153e4c;
+  border-radius:25px;
+  background:#091e2a;
+  color:#e6f4f8;
+  padding:12px 6px;
+  font-size:13px;
+  transition:.15s;
+}
+.subject:hover,.subject.selected {
+  background:#06382f;
+  border-color:var(--green);
+  color:#75ffdc;
+}
+.subject .emoji { margin-left:5px; }
+.composer {
+  border:1px solid #087e72;
+  border-radius:17px;
+  padding:13px;
+  background:#061821;
+}
+.tabs {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--line);
+}
+.tab {
+  border:0;
+  background:transparent;
+  color:#c5d8e1;
+  padding:10px 4px;
+  border-radius:10px;
+  font-size:13px;
+}
+.tab.active { background:#063b35;color:var(--green); }
+textarea {
+  display:block;
+  width:100%;
+  min-height:130px;
+  resize:vertical;
+  background:transparent;
+  border:0;
+  color:var(--text);
+  outline:none;
+  padding:15px 5px;
+  line-height:1.9;
+}
+textarea::placeholder { color:#7893a1; }
+.preview { display:none;margin:7px 0 13px; }
+.preview img {
+  display:block;
+  max-width:100%;
+  max-height:220px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  margin-bottom:8px;
+}
+.remove {
+  background:#6d2c37;
+  color:white;
+  border:0;
+  padding:7px 12px;
+  border-radius:9px;
+}
+.audio-status,.notice {
+  display:none;
+  background:#0a2b32;
+  border:1px solid #15554e;
+  border-radius:11px;
+  padding:11px;
+  color:#9bf4df;
+  font-size:13px;
+  line-height:1.8;
+  margin:10px 0;
+}
+.tools {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.tool-group { display:flex;gap:8px; }
+.tool {
+  border:1px solid var(--line);
+  background:#0a202d;
+  color:#d4e7ef;
+  padding:11px 13px;
+  border-radius:12px;
+}
+.tool:hover { border-color:var(--green); }
+.send {
+  background:linear-gradient(120deg,#00bd8f,#008e82);
+  color:white;
+  border:0;
+  border-radius:25px;
+  padding:12px 21px;
+  font-weight:750;
+}
+.hint { color:var(--muted);font-size:12px;line-height:1.9;margin:14px 0 0; }
+.response {
+  display:none;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.9;
+  background:#0a202b;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:15px;
+  margin-top:14px;
+}
+.features {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:11px;
+}
+.feature {
+  text-align:center;
+  padding:16px 8px;
+  background:#091e2a;
+  border:1px solid var(--line);
+  border-radius:15px;
+}
+.feature .ico { font-size:25px;margin-bottom:9px; }
+.feature strong { display:block;font-size:13px; }
+.feature small {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.8;
+  margin-top:7px;
+}
+.motto {
+  border:1px solid #08796a;
+  border-radius:16px;
+  padding:19px;
+  text-align:center;
+  color:#b6f6e8;
+  background:linear-gradient(100deg,#06362d,#071923);
+}
+footer {
+  text-align:center;
+  color:#7993a1;
+  font-size:11px;
+  padding:23px 4px;
+}
+@media(max-width:760px) {
+  .app { display:block; }
+  .sidebar { display:none; }
+  .main { padding:14px 11px; }
+  .mobile-menu { display:inline-block; }
+  .topbar { margin-bottom:16px; }
+  .hero { min-height:215px;padding:21px 17px; }
+  .hero p { max-width:78%;font-size:13px; }
+  .mascot {
+    left:-35px;
+    width:120px;height:120px;
+    font-size:61px;
+    opacity:.7;
+  }
+  .subjects { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .features { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .section { padding:14px; }
+  .tab { font-size:12px; }
+}
+@media(max-width:380px) {
+  .brand h1 { font-size:17px; }
+  .hero h2 { font-size:27px; }
+  .hero p { max-width:90%; }
+  .tool { padding:10px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo">K</div>
+    <div>
+      <h1>KCODE <span>AI</span></h1>
+      <small>مساعدك الذكي للمناهج الدراسية</small>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="active" onclick="goHome()">⌂　 الرئيسية</button>
+    <button onclick="goSubjects()">▤　 المواد الدراسية</button>
+    <button onclick="showNotice('سيتم تفعيل سجل المحادثات عند إضافة التخزين.')">▤　 المحادثات</button>
+    <button onclick="document.getElementById('imageInput').click()">▧　 الملفات والصور</button>
+    <button onclick="toggleTheme()">☀　 تغيير المظهر</button>
+  </nav>
+
+  <div class="grade">
+    👑
+    <strong>تانية بكالوريا</strong>
+    معاك نحو التفوق 🎓
+  </div>
+
+  <div class="side-quote">
+    "كل سؤال هو بداية لفهم جديد."<br>
+    — KCODE AI
+  </div>
+</aside>
+
+<main class="main">
+
+  <div class="topbar">
+    <div class="top-actions">
+      <button class="icon-btn mobile-menu"
+        onclick="showNotice('أنت تستخدم نسخة الموبايل من KCODE AI.')">☰</button>
+      <span>🎓 الصف الثاني بكالوريا</span>
+    </div>
+    <div class="top-actions">
+      <small>مرحبًا بك 👋</small>
+      <div class="logo" style="width:38px;height:38px;font-size:23px">K</div>
+    </div>
+  </div>
+
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <span class="pill">✦ مساعدك الدراسي الذكي</span>
+      <h2>مرحبًا بك في<br>KCODE <span>AI</span></h2>
+      <p>اسأل .. صوّر .. ارفع سؤالك، وابدأ رحلة فهم المنهج خطوة بخطوة.</p>
+      <p style="margin-top:12px">معاك في مواد الصف الثاني بكالوريا 💚</p>
+    </div>
+    <div class="mascot" aria-hidden="true">🤖</div>
+  </section>
+
+  <section class="section" id="subjects">
+    <div class="section-title">
+      <span>اختر المادة الدراسية</span>
+      <span>📚</span>
+    </div>
+
+    <div class="subjects">
+      <button class="subject" data-subject="عربي" onclick="chooseSubject(this)"><span class="emoji">📘</span>عربي</button>
+      <button class="subject" data-subject="إنجليزي" onclick="chooseSubject(this)"><span class="emoji">🔤</span>إنجليزي</button>
+      <button class="subject" data-subject="تاريخ" onclick="chooseSubject(this)"><span class="emoji">🏛️</span>تاريخ</button>
+      <button class="subject" data-subject="برمجة" onclick="chooseSubject(this)"><span class="emoji">💻</span>برمجة</button>
+      <button class="subject" data-subject="فرنساوي" onclick="chooseSubject(this)"><span class="emoji">🇫🇷</span>فرنساوي</button>
+      <button class="subject" data-subject="كيمياء" onclick="chooseSubject(this)"><span class="emoji">🧪</span>كيمياء</button>
+      <button class="subject" data-subject="رياضة" onclick="chooseSubject(this)"><span class="emoji">📐</span>رياضة</button>
+      <button class="subject" data-subject="فيزياء" onclick="chooseSubject(this)"><span class="emoji">⚛️</span>فيزياء</button>
+      <button class="subject" data-subject="إدارة أعمال" onclick="chooseSubject(this)"><span class="emoji">📊</span>إدارة أعمال</button>
+      <button class="subject" data-subject="علم نفس" onclick="chooseSubject(this)"><span class="emoji">🧠</span>علم نفس</button>
+    </div>
+  </section>
+
+  <section class="section" id="ask">
+    <div class="section-title">
+      <span>اسأل KCODE AI</span>
+      <span class="muted" id="chosenLabel">اختار مادة للبدء</span>
+    </div>
+
+    <div class="composer">
+      <div class="tabs">
+        <button class="tab active" id="textTab" onclick="setMode('text')">✏️ اكتب سؤالك</button>
+        <button class="tab" id="imageTab" onclick="setMode('image')">🖼️ ارفع صورة</button>
+        <button class="tab" id="voiceTab" onclick="setMode('voice')">🎙️ سجل صوتك</button>
+      </div>
+
+      <textarea id="question"
+        placeholder="اكتب سؤالك هنا...&#10;مثال: اشرح الدرس مع أمثلة وإجابة نموذجية."></textarea>
+
+      <input id="imageInput" type="file" accept="image/*" hidden>
+
+      <div class="preview" id="preview">
+        <img id="previewImg" alt="معاينة صورة السؤال">
+        <button class="remove" onclick="removeImage()">إزالة الصورة ✕</button>
+      </div>
+
+      <div class="audio-status" id="audioStatus" aria-live="polite"></div>
+      <div class="notice" id="notice" aria-live="polite"></div>
+
+      <div class="tools">
+        <div class="tool-group">
+          <button class="tool" onclick="startVoice()" aria-label="تسجيل صوتي">🎙️</button>
+          <button class="tool" onclick="openImagePicker()" aria-label="إضافة صورة">📎 🖼️</button>
+        </div>
+        <button class="send" onclick="sendQuestion()">إرسال السؤال　➤</button>
+      </div>
+    </div>
+
+    <div class="response" id="response" aria-live="polite"></div>
+    <p class="hint">💡 اختار المادة، واكتب سؤالك أو ارفع صورته أو استخدم الإدخال الصوتي. سيتم تفعيل الإجابات الذكية بعد ربط Gemini.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <span>مميزات KCODE AI</span>
+      <span>✨</span>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="ico">🎙️</div>
+        <strong>الإدخال الصوتي</strong>
+        <small>تحويل الكلام إلى نص في المتصفحات الداعمة</small>
+      </div>
+      <div class="feature">
+        <div class="ico">🖼️</div>
+        <strong>إرفاق الصور</strong>
+        <small>معاينة صور الأسئلة قبل الإرسال</small>
+      </div>
+      <div class="feature">
+        <div class="ico">📚</div>
+        <strong>مساعدة دراسية</strong>
+        <small>التركيز على مواد تانية بكالوريا</small>
+      </div>
+      <div class="feature">
+        <div class="ico">⚡</div>
+        <strong>شرح مبسط</strong>
+        <small>خطوة بخطوة بعد ربط الذكاء الاصطناعي</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="motto">💚 هدفنا نكون معاك في كل خطوة نحو التفوق 🎯</div>
+  <footer>KCODE AI © 2026 — مساعدك في رحلة التفوق</footer>
+</main>
+</div>
+
+<script>
+let selectedSubject = "";
+let selectedImage = null;
+let imageURL = null;
+let voiceRecognition = null;
+let isRecording = false;
+
+const $ = id => document.getElementById(id);
+
+function chooseSubject(button) {
+  document.querySelectorAll(".subject").forEach(item =>
+    item.classList.remove("selected")
+  );
+  button.classList.add("selected");
+  selectedSubject = button.dataset.subject;
+  $("chosenLabel").textContent = "المادة: " + selectedSubject;
+  $("question").focus();
+  $("notice").style.display = "none";
+}
+
+function goHome() {
+  $("home").scrollIntoView({behavior:"smooth"});
+}
+
+function goSubjects() {
+  $("subjects").scrollIntoView({behavior:"smooth"});
+}
+
+function showNotice(message) {
+  const notice = $("notice");
+  notice.textContent = message;
+  notice.style.display = "block";
+}
+
+function setMode(mode) {
+  ["text","image","voice"].forEach(item => {
+    $(item+"Tab").classList.toggle("active", item === mode);
+  });
+
+  if (mode === "image") openImagePicker();
+  if (mode === "voice") startVoice();
+  if (mode === "text") $("question").focus();
+}
+
+function openImagePicker() {
+  $("imageInput").click();
+}
+
+$("imageInput").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    showNotice("من فضلك اختر ملف صورة.");
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    showNotice("حجم الصورة أكبر من 10 ميجابايت. اختر صورة أصغر.");
+    event.target.value = "";
+    return;
+  }
+
+  selectedImage = file;
+
+  if (imageURL) URL.revokeObjectURL(imageURL);
+  imageURL = URL.createObjectURL(file);
+
+  $("previewImg").src = imageURL;
+  $("preview").style.display = "block";
+  $("notice").style.display = "none";
+});
+
+function removeImage() {
+  selectedImage = null;
+  $("imageInput").value = "";
+  $("preview").style.display = "none";
+  $("previewImg").removeAttribute("src");
+
+  if (imageURL) URL.revokeObjectURL(imageURL);
+  imageURL = null;
+}
+
+function startVoice() {
+  const status = $("audioStatus");
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    status.style.display = "block";
+    status.textContent =
+      "المتصفح لا يدعم التعرف على الكلام. جرّب Chrome أو استخدم ميكروفون لوحة المفاتيح.";
+    return;
+  }
+
+  if (isRecording && voiceRecognition) {
+    voiceRecognition.stop();
+    return;
+  }
+
+  voiceRecognition = new SpeechRecognition();
+  voiceRecognition.lang = "ar-EG";
+  voiceRecognition.interimResults = true;
+  voiceRecognition.continuous = false;
+
+  voiceRecognition.onstart = () => {
+    isRecording = true;
+    status.style.display = "block";
+    status.textContent = "🔴 جاري الاستماع... تحدث الآن.";
+  };
+
+  voiceRecognition.onresult = event => {
+    let transcript = "";
+    for (let i = 0; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    $("question").value = transcript;
+  };
+
+  voiceRecognition.onerror = () => {
+    status.style.display = "block";
+    status.textContent =
+      "تعذر تشغيل الصوت. تحقق من إذن الميكروفون واتصال الإنترنت.";
+  };
+
+  voiceRecognition.onend = () => {
+    isRecording = false;
+    status.textContent = "انتهى التسجيل. راجع النص قبل الإرسال.";
+  };
+
+  try {
+    voiceRecognition.start();
+  } catch (error) {
+    status.style.display = "block";
+    status.textContent = "انتظر قليلًا ثم حاول التسجيل مرة أخرى.";
+  }
+}
+
+function sendQuestion() {
+  const question = $("question").value.trim();
+  const response = $("response");
+
+  $("notice").style.display = "none";
+
+  if (!selectedSubject) {
+    showNotice("اختار المادة الدراسية الأول.");
+    goSubjects();
+    return;
+  }
+
+  if (!question && !selectedImage) {
+    showNotice("اكتب سؤالك أو ارفع صورة للسؤال أولًا.");
+    return;
+  }
+
+  response.style.display = "block";
+  response.textContent =
+    "المادة: " + selectedSubject + "\n\n" +
+    "تم تجهيز السؤال في الواجهة بنجاح.\n\n" +
+    "تنبيه: الإجابة الفعلية لم تُنفذ بعد؛ يجب ربط Gemini على خادم آمن، وإرسال نص السؤال والصورة إليه حتى يتمكن من تحليلها والرد عليك.";
+
+  response.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function toggleTheme() {
+  showNotice("الوضع الحالي داكن. إعدادات المظهر الإضافية سنضيفها لاحقًا.");
+}
+</script>
+</body>
+</html>
